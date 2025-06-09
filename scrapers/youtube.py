@@ -57,7 +57,4 @@ class YouTubeScraper(BaseScraper):
         keywords = tree.xpath('//meta[@name="keywords"]/@content')
         data['tags'] = [tag.strip() for tag in keywords[0].split(',')] if keywords else []
 
-        # Rating (YouTube ne l'expose pas publiquement)
-        data['rating'] = "N/A"
-
         return data

@@ -53,6 +53,28 @@
       white-space: pre-wrap;
       word-wrap: break-word;
     }
+
+    .thumbnail-container {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .thumbnail-image {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transition: transform 0.2s ease;
+    }
+
+    .thumbnail-image:hover {
+      transform: scale(1.02);
+    }
+
+    .result-section {
+      border-top: 1px solid var(--bs-border-color);
+      padding-top: 1rem;
+    }
   </style>
 </head>
 <body class="bg-body text-body">
@@ -87,7 +109,18 @@
         {% if result.error %}
           <div class="alert alert-danger">{{ result.error }}</div>
         {% else %}
-          <pre class="bg-light-subtle p-3 rounded border">{{ result }}</pre>
+          <!-- Affichage de la miniature -->
+          {% if image_url %}
+            <div class="thumbnail-container">
+              <img src="{{ image_url }}" alt="Miniature de la vidéo" class="thumbnail-image" />
+              <p class="text-muted small mt-2">Miniature de la vidéo</p>
+            </div>
+          {% endif %}
+          
+          <!-- Données JSON -->
+          <div class="result-section">
+            <pre class="bg-light-subtle p-3 rounded border">{{ result }}</pre>
+          </div>
         {% endif %}
       </div>
     {% endif %}
@@ -127,6 +160,6 @@
     }
 
     updateThemeText();
-</script>
+  </script>
 </body>
 </html>
