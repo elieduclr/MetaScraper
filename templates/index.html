@@ -7,35 +7,56 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
+    :root {
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-soft: 0 4px 20px rgba(0,0,0,0.08);
+      --shadow-medium: 0 8px 32px rgba(0,0,0,0.12);
+      --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --border-radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
     }
 
-    .form-card {
-      max-width: 600px;
-      margin: auto;
-      background-color: var(--bs-body-bg);
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
+    /* === ANIMATIONS KEYFRAMES === */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .progress-overlay {
-      position: fixed;
-      z-index: 1050;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: transparent;
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
 
-    .progress-bar-animated {
-      height: 4px;
-      width: 100%;
-      animation: indeterminate 1.2s infinite linear;
-      background: var(--bs-primary);
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200px 0; }
+      100% { background-position: calc(200px + 100%) 0; }
     }
 
     @keyframes indeterminate {
@@ -44,187 +65,596 @@
       100% { transform: translateX(100%) scaleX(1); }
     }
 
+    /* === LAYOUT RESPONSIVE === */
+    .container {
+      padding: 1rem;
+    }
+
+    .main-content {
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    .form-card {
+      max-width: 100%;
+      margin: auto;
+      background: var(--bs-body-bg);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      box-shadow: var(--shadow-soft);
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient-primary);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .form-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .form-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-medium);
+    }
+
+    /* === HEADER === */
+    .header-section {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .header-section h1 {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      animation: pulse 2s infinite;
+    }
+
+    .header-section .lead {
+      color: var(--bs-secondary-color);
+      font-weight: 300;
+    }
+
+    /* === PROGRESS BAR === */
+    .progress-overlay {
+      position: fixed;
+      z-index: 1050;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: transparent;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .progress-overlay.show {
+      opacity: 1;
+    }
+
+    .progress-bar-animated {
+      height: 4px;
+      width: 100%;
+      animation: indeterminate 1.2s infinite linear;
+      background: var(--gradient-primary);
+    }
+
+    /* === THEME TOGGLE === */
     .theme-toggle {
       position: fixed;
       top: 1rem;
       right: 1rem;
       z-index: 9999;
+      animation: slideInRight 0.5s ease-out;
     }
 
-    pre {
-      white-space: pre-wrap;
-      word-wrap: break-word;
+    /* === FORM ELEMENTS === */
+    .form-group {
+      position: relative;
+      margin-bottom: 1.5rem;
     }
 
-    pre code .key {
-      color: #d63384;
-      font-weight: bold;
+    .form-control {
+      border: 2px solid var(--bs-border-color);
+      border-radius: 12px;
+      padding: 0.875rem 1rem;
+      font-size: 1rem;
+      transition: var(--transition-fast);
+      background: var(--bs-body-bg);
     }
 
-    pre code .string {
-      color: #2ca02c;
+    .form-control:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      transform: translateY(-2px);
     }
 
-    pre code .number {
-      color: #007bff;
+    .form-label {
+      font-weight: 600;
+      color: var(--bs-body-color);
+      margin-bottom: 0.5rem;
     }
 
-    pre code .boolean {
-      color: #fd7e14;
-      font-weight: bold;
+    .btn {
+      border-radius: 12px;
+      padding: 0.875rem 2rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: var(--transition-fast);
+      position: relative;
+      overflow: hidden;
     }
 
-    pre code .null {
-      color: #6c757d;
-      font-style: italic;
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
     }
 
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .btn:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      border: none;
+    }
+
+    /* === LOADING SKELETON === */
+    .skeleton {
+      background: #f0f0f0;
+      background-image: linear-gradient(90deg, #f0f0f0, #e0e0e0, #f0f0f0);
+      background-size: 200px 100%;
+      background-repeat: no-repeat;
+      border-radius: 8px;
+      animation: shimmer 1.2s ease-in-out infinite;
+    }
+
+    .skeleton-text {
+      height: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .skeleton-image {
+      width: 100%;
+      height: 200px;
+      margin-bottom: 1rem;
+    }
+
+    /* === THUMBNAIL === */
     .thumbnail-container {
       text-align: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
+      animation: fadeInUp 0.6s ease-out 0.2s both;
     }
 
     .thumbnail-image {
       max-width: 100%;
       height: auto;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      transition: transform 0.2s ease;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-soft);
+      transition: var(--transition-smooth);
+      opacity: 0;
+    }
+
+    .thumbnail-image.loaded {
+      opacity: 1;
+      animation: fadeInUp 0.5s ease-out;
     }
 
     .thumbnail-image:hover {
-      transform: scale(1.02);
+      transform: scale(1.03) rotate(1deg);
+      box-shadow: var(--shadow-medium);
     }
 
+    /* === RESULT SECTION === */
     .result-section {
-      border-top: 1px solid var(--bs-border-color);
-      padding-top: 1rem;
+      border-top: 2px solid var(--bs-border-color);
+      padding-top: 1.5rem;
+      margin-top: 1.5rem;
+      animation: fadeInUp 0.6s ease-out 0.4s both;
     }
 
-    .btn, .form-control {
-      transition: all 0.2s ease-in-out;
+    .json-container {
+      position: relative;
+      background: var(--bs-gray-100);
+      border-radius: 12px;
+      overflow: hidden;
     }
 
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin: 0;
+      padding: 1.5rem;
+      font-size: 0.875rem;
+      line-height: 1.5;
     }
 
-    @media (max-width: 576px) {
+    pre code .key { color: #d63384; font-weight: bold; }
+    pre code .string { color: #2ca02c; }
+    pre code .number { color: #007bff; }
+    pre code .boolean { color: #fd7e14; font-weight: bold; }
+    pre code .null { color: #6c757d; font-style: italic; }
+
+    /* === RESPONSIVE BREAKPOINTS === */
+    
+    /* Mobile First - Extra Small devices (portrait phones, less than 576px) */
+    @media (max-width: 575.98px) {
+      .container {
+        padding: 0.5rem;
+      }
+      
       .form-card {
-        padding: 1.2rem;
+        padding: 1.5rem;
+        margin: 0.5rem;
+        border-radius: 12px;
       }
-      h1 {
-        font-size: 1.8rem;
+      
+      .header-section {
+        margin-bottom: 2rem;
+      }
+      
+      .header-section h1 {
+        font-size: 2rem;
+      }
+      
+      .header-section .lead {
+        font-size: 1rem;
+      }
+      
+      .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+      }
+      
+      .theme-toggle {
+        top: 0.5rem;
+        right: 0.5rem;
+      }
+      
+      .form-control {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+      }
+      
+      pre {
+        padding: 1rem;
+        font-size: 0.8rem;
       }
     }
 
+    /* Small devices (landscape phones, 576px and up) */
+    @media (min-width: 576px) {
+      .form-card {
+        max-width: 540px;
+      }
+      
+      .container {
+        padding: 1rem;
+      }
+    }
+
+    /* Medium devices (tablets, 768px and up) */
+    @media (min-width: 768px) {
+      .form-card {
+        max-width: 720px;
+        padding: 2.5rem;
+      }
+      
+      .header-section {
+        margin-bottom: 4rem;
+      }
+      
+      .header-section h1 {
+        font-size: 3rem;
+      }
+      
+      .container {
+        padding: 2rem;
+      }
+      
+      .btn {
+        padding: 1rem 2.5rem;
+      }
+    }
+
+    /* Large devices (desktops, 992px and up) */
+    @media (min-width: 992px) {
+      .form-card {
+        max-width: 800px;
+        padding: 3rem;
+      }
+      
+      .header-section h1 {
+        font-size: 3.5rem;
+      }
+      
+      .thumbnail-image {
+        max-width: 80%;
+      }
+    }
+
+    /* Extra large devices (large desktops, 1200px and up) */
+    @media (min-width: 1200px) {
+      .form-card {
+        max-width: 900px;
+      }
+      
+      .container {
+        max-width: 1140px;
+      }
+    }
+
+    /* Ultra wide screens */
+    @media (min-width: 1400px) {
+      .form-card {
+        max-width: 1000px;
+      }
+    }
+
+    /* === DARK MODE ADJUSTMENTS === */
+    [data-bs-theme="dark"] .skeleton {
+      background: #2d3748;
+      background-image: linear-gradient(90deg, #2d3748, #4a5568, #2d3748);
+    }
+
+    [data-bs-theme="dark"] .json-container {
+      background: var(--bs-gray-800);
+    }
+
+    /* === TOAST IMPROVEMENTS === */
     .toast {
-      opacity: 0;
-      transition: opacity 0.5s ease-in-out;
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
     }
 
-    .toast.show {
-      opacity: 1;
+    /* === FOOTER === */
+    .footer {
+      text-align: center;
+      margin-top: 4rem;
+      padding: 2rem 0;
+      color: var(--bs-secondary-color);
+      font-size: 0.9rem;
     }
 
-    .btn, .form-control, .thumbnail-image, .form-card {
-      transition: all 0.3s ease-in-out;
+    /* === ACCESSIBILITY === */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
 
-    .btn:active {
-      transform: scale(0.98);
+    /* Focus visible pour l'accessibilité */
+    .btn:focus-visible,
+    .form-control:focus-visible {
+      outline: 2px solid #667eea;
+      outline-offset: 2px;
     }
   </style>
 </head>
 <body class="bg-body text-body">
 
   <!-- Barre de progression -->
-  <div class="progress-overlay" id="progress-bar-container" style="display: none;">
+  <div class="progress-overlay" id="progress-bar-container">
     <div class="progress-bar-animated"></div>
   </div>
 
   <!-- Toggle thème -->
   <div class="theme-toggle">
-    <button id="theme-btn" class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" title="Changer de thème">🌙 Mode sombre</button>
+    <button id="theme-btn" class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" title="Changer de thème">
+      <i class="fas fa-moon"></i> Mode sombre
+    </button>
   </div>
 
-  <div class="container py-5">
-    <div class="text-center mb-5">
-      <h1 class="fw-bold">🎯 MetaScraper</h1>
-      <p class="lead">Extrait intelligemment les métadonnées de vidéos à partir d'une URL</p>
-    </div>
-
-    <form method="post" class="form-card" onsubmit="return validateForm()">
-      <div class="mb-3">
-        <label for="url" class="form-label">URL de la vidéo</label>
-        <input type="url" name="url" id="url" class="form-control" placeholder="https://..." required />
-        <small class="text-muted">Exemple : <a href="#" onclick="insertExampleURL()">YouTube</a></small>
+  <div class="container py-4">
+    <div class="main-content">
+      <!-- Header -->
+      <div class="header-section">
+        <h1 class="fw-bold">🎯 MetaScraper</h1>
+        <p class="lead">Extrait intelligemment les métadonnées de vidéos à partir d'une URL</p>
       </div>
-      <button type="submit" class="btn btn-primary w-100">
-        <i class="fas fa-search"></i> Scraper
-      </button>
-    </form>
 
-    {% if result %}
-      <div class="form-card mt-5">
-        <h5 class="mb-3 text-primary">📄 Résultat du Scraping</h5>
-        {% if result.error %}
-          <div class="alert alert-danger">{{ result.error }}</div>
-        {% else %}
-          {% if image_url %}
-            <div class="thumbnail-container">
-              <img src="{{ image_url }}" alt="Miniature" class="thumbnail-image" />
-              <p class="text-muted small mt-2">Miniature</p>
+      <!-- Formulaire principal -->
+      <form method="post" class="form-card" onsubmit="return validateForm()">
+        <div class="form-group">
+          <label for="url" class="form-label">
+            <i class="fas fa-link text-primary"></i> URL de la vidéo
+          </label>
+          <input type="url" name="url" id="url" class="form-control" placeholder="https://..." required />
+          <small class="text-muted mt-2 d-block">
+            Exemple : <a href="#" onclick="insertExampleURL()" class="text-decoration-none">YouTube</a>
+          </small>
+        </div>
+        <button type="submit" class="btn btn-primary w-100" id="submit-btn">
+          <i class="fas fa-search me-2"></i> Scraper les métadonnées
+        </button>
+      </form>
+
+      <!-- Résultats -->
+      {% if result %}
+        <div class="form-card mt-4">
+          <h5 class="mb-4 text-primary">
+            <i class="fas fa-file-alt me-2"></i> Résultat du Scraping
+          </h5>
+          
+          {% if result.error %}
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              {{ result.error }}
+            </div>
+          {% else %}
+            {% if image_url %}
+              <div class="thumbnail-container">
+                <!-- Skeleton loader pour l'image -->
+                <div class="skeleton skeleton-image" id="image-skeleton"></div>
+                <!-- Image avec lazy loading -->
+                <img 
+                  data-src="{{ image_url }}" 
+                  alt="Miniature de la vidéo" 
+                  class="thumbnail-image lazy-image" 
+                  loading="lazy"
+                  onload="this.classList.add('loaded'); document.getElementById('image-skeleton').style.display = 'none';"
+                  onerror="this.style.display = 'none'; document.getElementById('image-skeleton').style.display = 'none';"
+                />
+                <p class="text-muted small mt-3">
+                  <i class="fas fa-image me-1"></i> Miniature
+                </p>
+              </div>
+            {% endif %}
+            
+            <div class="result-section">
+              <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <strong class="text-primary">
+                  <i class="fas fa-code me-2"></i> Données JSON
+                </strong>
+                <button class="btn btn-sm btn-outline-primary" onclick="copyJSON(this)" title="Copier dans le presse-papiers">
+                  <i class="fas fa-copy me-1"></i> Copier
+                </button>
+              </div>
+              
+              <div class="json-container">
+                <pre class="mb-0"><code id="json-result">{{ result | tojson(indent=2) | safe }}</code></pre>
+              </div>
             </div>
           {% endif %}
-          
-          <div class="result-section">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <strong>Résultat brut JSON</strong>
-              <button class="btn btn-sm btn-outline-secondary" onclick="copyJSON(this)" title="Copier dans le presse-papiers">
-                <i class="fas fa-copy"></i> Copier
-              </button>
-            </div>
-            <pre class="bg-light-subtle p-3 rounded border"><code id="json-result">{{ result | tojson(indent=2) | safe }}</code></pre>
-          </div>
-        {% endif %}
-      </div>
-    {% endif %}
+        </div>
+      {% endif %}
+    </div>
   </div>
 
-  <footer class="text-center mt-5 mb-3 text-muted small">
-    Fait avec ❤️ par Élie – {{ 2025 }}
+  <footer class="footer">
+    <div class="container">
+      Fait avec <i class="fas fa-heart text-danger"></i> par Élie – {{ 2025 }}
+    </div>
   </footer>
+
+  <!-- Toast container -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+    <div id="toast-message" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">
+          Action réalisée avec succès !
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fermer"></button>
+      </div>
+    </div>
+  </div>
 
   <script>
     const html = document.documentElement;
     const themeBtn = document.getElementById("theme-btn");
     const progressBar = document.getElementById("progress-bar-container");
 
-    function startProgress() {
-      progressBar.style.display = "block";
+    // === LAZY LOADING IMAGES === 
+    function initLazyLoading() {
+      const lazyImages = document.querySelectorAll('.lazy-image');
+      
+      if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              img.src = img.dataset.src;
+              img.classList.remove('lazy-image');
+              observer.unobserve(img);
+            }
+          });
+        }, {
+          rootMargin: '50px 0px',
+          threshold: 0.01
+        });
+
+        lazyImages.forEach(img => imageObserver.observe(img));
+      } else {
+        // Fallback pour les navigateurs sans IntersectionObserver
+        lazyImages.forEach(img => {
+          img.src = img.dataset.src;
+          img.classList.remove('lazy-image');
+        });
+      }
     }
 
+    // === PROGRESS BAR === 
+    function startProgress() {
+      progressBar.classList.add('show');
+      
+      // Animation du bouton
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Scraping en cours...';
+      submitBtn.disabled = true;
+    }
+
+    function stopProgress() {
+      progressBar.classList.remove('show');
+      
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.innerHTML = '<i class="fas fa-search me-2"></i> Scraper les métadonnées';
+      submitBtn.disabled = false;
+    }
+
+    // === VALIDATION === 
     function validateForm() {
       const urlField = document.getElementById("url");
+      const url = urlField.value.trim();
+      
+      if (!url) {
+        showToast("Veuillez saisir une URL !", "warning");
+        urlField.focus();
+        return false;
+      }
+      
       try {
-        new URL(urlField.value);
+        new URL(url);
         startProgress();
         return true;
       } catch {
-        showToast("URL invalide !");
+        showToast("URL invalide ! Vérifiez le format.", "danger");
+        urlField.focus();
+        urlField.select();
         return false;
       }
     }
 
-    function insertExampleURL() {
-      document.getElementById("url").value = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-    }
-
+    // === THEME MANAGEMENT === 
     function updateThemeText() {
       const current = html.getAttribute("data-bs-theme");
-      themeBtn.innerHTML = current === "dark" ? "☀️ Mode clair" : "🌙 Mode sombre";
+      const icon = current === "dark" ? "fas fa-sun" : "fas fa-moon";
+      const text = current === "dark" ? "Mode clair" : "Mode sombre";
+      themeBtn.innerHTML = `<i class="${icon}"></i> ${text}`;
     }
 
     themeBtn.addEventListener("click", () => {
@@ -232,30 +662,34 @@
       html.setAttribute("data-bs-theme", newTheme);
       localStorage.setItem("theme", newTheme);
       updateThemeText();
+      
+      // Animation sur le bouton
+      themeBtn.style.transform = "scale(0.9)";
+      setTimeout(() => {
+        themeBtn.style.transform = "scale(1)";
+      }, 100);
     });
 
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) html.setAttribute("data-bs-theme", savedTheme);
-    updateThemeText();
+    // === EXEMPLE URL === 
+    function insertExampleURL() {
+      const urlField = document.getElementById("url");
+      urlField.value = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+      urlField.focus();
+      
+      // Animation de focus
+      urlField.style.transform = "scale(1.02)";
+      setTimeout(() => {
+        urlField.style.transform = "scale(1)";
+      }, 200);
+    }
 
-    // Fonction qui décode les échappements Unicode \uXXXX dans un JSON string
+    // === JSON UTILITIES === 
     function prettyPrintJSON(jsonString) {
       try {
         const obj = JSON.parse(jsonString);
         return JSON.stringify(obj, null, 2);
       } catch (e) {
-        // Si ce n’est pas un JSON valide, on renvoie la string brute
         return jsonString;
-      }
-    }
-
-    window.onload = () => {
-      document.getElementById("url").focus();
-      const code = document.getElementById("json-result");
-      if (code) {
-        const raw = code.innerText;
-        const decoded = prettyPrintJSON(raw);
-        code.innerHTML = syntaxHighlight(decoded);
       }
     }
 
@@ -288,34 +722,126 @@
       );
     }
 
+    // === COPY FUNCTIONALITY === 
     function copyJSON(btn) {
       const jsonText = document.getElementById("json-result").innerText;
-      navigator.clipboard.writeText(jsonText).then(() => {
-        showToast("Résultat copié !");
-      }).catch(err => {
-        console.error("Erreur de copie :", err);
-        showToast("Erreur lors de la copie");
-      });
+      
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(jsonText).then(() => {
+          showToast("Résultat copié dans le presse-papiers !", "success");
+          
+          // Animation du bouton
+          btn.innerHTML = '<i class="fas fa-check me-1"></i> Copié !';
+          setTimeout(() => {
+            btn.innerHTML = '<i class="fas fa-copy me-1"></i> Copier';
+          }, 2000);
+        }).catch(err => {
+          console.error("Erreur de copie :", err);
+          showToast("Erreur lors de la copie", "danger");
+        });
+      } else {
+        // Fallback pour les navigateurs sans clipboard API
+        const textArea = document.createElement("textarea");
+        textArea.value = jsonText;
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+          document.execCommand('copy');
+          showToast("Résultat copié !", "success");
+        } catch (err) {
+          showToast("Erreur lors de la copie", "danger");
+        }
+        
+        document.body.removeChild(textArea);
+      }
     }
-    function showToast(message = "Action réalisée avec succès !") {
+
+    // === TOAST SYSTEM === 
+    function showToast(message = "Action réalisée avec succès !", type = "primary") {
       const toastEl = document.getElementById("toast-message");
-      toastEl.querySelector(".toast-body").textContent = message;
-      const toast = new bootstrap.Toast(toastEl);
+      const toastBody = toastEl.querySelector(".toast-body");
+      
+      // Mise à jour du contenu et du style
+      toastBody.textContent = message;
+      toastEl.className = `toast align-items-center text-bg-${type} border-0`;
+      
+      const toast = new bootstrap.Toast(toastEl, {
+        autohide: true,
+        delay: 3000
+      });
       toast.show();
     }
+
+    // === INITIALIZATION === 
+    window.addEventListener('load', () => {
+      // Focus sur le champ URL
+      document.getElementById("url").focus();
+      
+      // Initialisation du lazy loading
+      initLazyLoading();
+      
+      // Coloration syntaxique du JSON
+      const code = document.getElementById("json-result");
+      if (code) {
+        const raw = code.innerText;
+        const decoded = prettyPrintJSON(raw);
+        code.innerHTML = syntaxHighlight(decoded);
+      }
+      
+      // Arrêt du progress bar si présent
+      stopProgress();
+    });
+
+    // Initialisation du thème
+    const savedTheme = localStorage.getItem("theme") || "light";
+    html.setAttribute("data-bs-theme", savedTheme);
+    updateThemeText();
+
+    // === KEYBOARD SHORTCUTS === 
+    document.addEventListener('keydown', (e) => {
+      // Ctrl/Cmd + Enter pour soumettre
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        const form = document.querySelector('form');
+        if (validateForm()) {
+          form.submit();
+        }
+      }
+      
+      // Ctrl/Cmd + K pour focus sur URL
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        document.getElementById('url').focus();
+      }
+    });
+
+    // === FORM ENHANCEMENTS === 
+    const urlInput = document.getElementById('url');
+    let validationTimeout;
+
+    urlInput.addEventListener('input', (e) => {
+      clearTimeout(validationTimeout);
+      const input = e.target;
+      
+      // Suppression des classes de validation précédentes
+      input.classList.remove('is-valid', 'is-invalid');
+      
+      if (input.value.trim()) {
+        validationTimeout = setTimeout(() => {
+          try {
+            new URL(input.value.trim());
+            input.classList.add('is-valid');
+          } catch {
+            input.classList.add('is-invalid');
+          }
+        }, 500);
+      }
+    });
+
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
-  <div id="toast-message" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body">
-        Action réalisée avec succès !
-      </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fermer"></button>
-    </div>
-  </div>
-  </div>
-
 </body>
 </html>
