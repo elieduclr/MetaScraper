@@ -31,11 +31,9 @@ def index():
             result = {"error": "Aucun scraper ne peut gérer cette URL."}
     
     if result:
-        import json
-        json_result = json.dumps(result, indent=2, ensure_ascii=False)
         # Extraire l'image si elle existe
         image_url = result.get("image") if isinstance(result, dict) else None
-        return render_template("index.html", result=json_result, image_url=image_url)
+        return render_template("index.html", result=result, image_url=image_url)
     else:
         return render_template("index.html", result=None, image_url=None)
 
