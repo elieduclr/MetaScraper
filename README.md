@@ -33,6 +33,11 @@ MetaScraper/
 │   ├── youtube.py         # Scraper YouTube
 │   ├── pornhub.py         # Scraper Pornhub
 │   └── instagram.py       # Scraper Instagram
+├── static/
+│   ├── css/
+│   │   └── style.css      # Style CSS
+│   └── images/
+│       └── favicon.ico    # Favicon
 ├── .gitignore
 ├── LICENSE
 └── README.md
