@@ -76,6 +76,9 @@
                 <p class="text-muted small mt-3">
                   <i class="fas fa-image me-1"></i> Miniature
                 </p>
+                <button class="btn btn-sm btn-outline-primary mt-2" onclick="copyThumbnailURL(this)" title="Copier l'URL de la miniature">
+                  <i class="fas fa-copy me-1"></i> Copier l’URL de la miniature
+                </button>
               </div>
             {% endif %}
             
@@ -297,6 +300,44 @@
           showToast("Erreur lors de la copie", "danger");
         }
         
+        document.body.removeChild(textArea);
+      }
+    }
+
+    function copyThumbnailURL(btn) {
+      const image = document.querySelector('.thumbnail-image');
+      const url = image ? image.dataset.src : null;
+
+      if (!url) {
+        showToast("URL non trouvée", "danger");
+        return;
+      }
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(url).then(() => {
+          showToast("URL de la miniature copiée !", "success");
+          btn.innerHTML = '<i class="fas fa-check me-1"></i> Copié !';
+          setTimeout(() => {
+            btn.innerHTML = '<i class="fas fa-copy me-1"></i> Copier l’URL de la miniature';
+          }, 2000);
+        }).catch(err => {
+          console.error("Erreur de copie :", err);
+          showToast("Erreur lors de la copie", "danger");
+        });
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = url;
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        try {
+          document.execCommand('copy');
+          showToast("URL copiée !", "success");
+        } catch (err) {
+          showToast("Erreur lors de la copie", "danger");
+        }
+
         document.body.removeChild(textArea);
       }
     }
